@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bank Exam Quiz</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+}
+
+/* ========================= */
+/* TIMER AREA */
+/* ========================= */
+
+#timer-container{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:#f4f6f9;
+    padding-bottom:10px;
+}
+
+#timer{
+    background:#222;
+    color:white;
+    padding:15px;
+    text-align:center;
+    font-size:22px;
+    border-radius:10px;
+    margin-bottom:10px;
+}
+
+.timer-buttons{
+    text-align:center;
+}
+
+#pauseBtn,
+#resumeBtn{
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    margin:5px;
+}
+
+#pauseBtn{
+    background:#ff9800;
+    color:white;
+}
+
+#resumeBtn{
+    background:#28a745;
+    color:white;
+}
+
+.question{
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.question h3{
+    margin-bottom:15px;
+}
+
+.option{
+    display:block;
+    padding:12px;
+    margin:10px 0;
+    border:1px solid #ccc;
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+.option:hover{
+    background:#f0f0f0;
+}
+
+.selected{
+    background:#cfe2ff;
+    border:2px solid #0d6efd;
+}
+
+.mark-btn{
+    margin-top:10px;
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#ff9800;
+    color:white;
+}
+
+.marked{
+    background:#ffcc80 !important;
+}
+
+.review-marked{
+    background:#e0e0e0 !important;
+    border:2px solid #9e9e9e;
+}
+
+.clear-btn{
+    margin-top:10px;
+    margin-left:10px;
+    padding:8px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#dc3545;
+    color:white;
+}
+
+.submit-btn{
+    width:100%;
+    padding:15px;
+    font-size:20px;
+    border:none;
+    border-radius:10px;
+    background:#28a745;
+    color:white;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+.result-box{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.review-btn{
+    padding:12px 20px;
+    margin-top:20px;
+    border:none;
+    border-radius:10px;
+    background:#007bff;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.review-question{
+    background:white;
+    padding:20px;
+    margin:20px 0;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.correct{
+    color:green;
+    font-weight:bold;
+}
+
+.wrong{
+    color:red;
+    font-weight:bold;
+}
+
+.unanswered{
+    color:orange;
+    font-weight:bold;
+}
+
+.correct-answer{
+    background:#d4edda;
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+}
+
+.disabled-option{
+    pointer-events:none;
+    opacity:0.6;
+}
+
+.disabled-btn{
+    opacity:0.6;
+    cursor:not-allowed;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Bank Exam MCQ Quiz</h1>
+
+<!-- ========================= -->
+<!-- TIMER -->
+<!-- ========================= -->
+
+<div id="timer-container">
+
+    <div id="timer">
+        Time Left: 20:00
+    </div>
+
+    <div class="timer-buttons">
+
+        <button id="pauseBtn" onclick="pauseTimer()">
+            Pause
+        </button>
+
+        <button id="resumeBtn" onclick="resumeTimer()" disabled>
+            Resume
+        </button>
+
+    </div>
+
+</div>
+
+<div id="quiz"></div>
+
+<button class="submit-btn" onclick="submitQuiz()">
+Submit Quiz
+</button>
+
+</div>
+
+<script>
+
+// ===============================
+// QUESTIONS AREA
+// ===============================
+
+const questions = [
+
+{q:"The National Institute of Urban Affairs (NIUA) celebrated its Golden Jubilee by launching the National Urban Learning Platform (NULP) as the urban arm of which of the following national capacity-building missions?", options:["Mission Antyodaya","Mission Karmayogi (iGOT Karmayogi)","National e-Governance Plan (NeGP)","Digital India Mission"], answer:1},
+
+{q:"The theme under which the National Institute of Urban Affairs (NIUA) commemorated its 50 years of contribution towards urban transformation was:", options:["Urban India for Amrit Kaal @2047","Smart Cities for Viksit Bharat @2047","Resilient Urban India @2047","Sustainable Cities and Green India @2047"], answer:2},
+
+{q:"The Golden Jubilee celebrations of NIUA along with the launch of multiple publications and initiatives were held at:", options:["Bharat Mandapam, New Delhi","Vigyan Bhawan, New Delhi","India Habitat Centre, New Delhi","Dr. Ambedkar International Centre, New Delhi"], answer:1},
+
+{q:"Who attended the National Institute of Urban Affairs (NIUA) Golden Jubilee celebrations as the Chief Guest?", options:["Dr. V.K. Saraswat","Dr. P.K. Mishra","Amitabh Kant","Rajiv Gauba"], answer:1},
+
+{q:"Which one of the following publications was NOT launched during the Golden Jubilee celebrations of NIUA?", options:["Vision for a Resilient Urban India: Building Sustainable and Future-Ready Cities","Understanding the New Geography of India's Urbanisation: A Geospatial Approach","50 Years of Shaping India's Urban Transformation","India Urban Infrastructure Outlook 2050"], answer:3},
+
+{q:"The National Institute of Urban Affairs (NIUA) functions under which Union Ministry?", options:["Ministry of Rural Development","Ministry of Housing and Urban Affairs","Ministry of Panchayati Raj","Ministry of Jal Shakti"], answer:1},
+
+{q:"Which of the following is correctly matched with the National Institute of Urban Affairs (NIUA)?", options:["Headquarters – Gurugram | Established – 1982","Headquarters – New Delhi | Established – 1976","Headquarters – New Delhi | Established – 1986","Headquarters – Lucknow | Established – 1975"], answer:1},
+
+{q:"The iGOT Karmayogi platform, of which the National Urban Learning Platform has become the urban arm, was launched in:", options:["2018","2019","2020","2021"], answer:2},
+
+{q:"The LNG carrier Disha, which recently became the first Indian tanker to cross the Strait of Hormuz after the regional conflict, was managed by a consortium led by:", options:["Cochin Shipyard Limited","Shipping Corporation of India (SCI)","Mazagon Dock Shipbuilders Limited","Garden Reach Shipbuilders & Engineers"], answer:1},
+
+{q:"The LNG carrier Disha was chartered by:", options:["GAIL (India) Limited","Indian Oil Corporation Limited","Petronet LNG Limited","Bharat Petroleum Corporation Limited"], answer:2},
+
+{q:"Approximately how much Liquefied Natural Gas (LNG) was being transported by the carrier Disha during its historic voyage?", options:["58,250 tonnes","62,370 tonnes","65,100 tonnes","68,420 tonnes"], answer:1},
+
+{q:"Following the US-Iran ceasefire announcement, how many vessels were reported to have safely crossed the Strait of Hormuz, including Indian and foreign-flagged ships?", options:["10","12","15","18"], answer:2},
+
+{q:"Which of the following correctly represents the static details of the Shipping Corporation of India (SCI)?", options:["Headquarters – Chennai | Established – 1956","Headquarters – Mumbai | Established – 1961","Headquarters – Kochi | Established – 1971","Headquarters – Visakhapatnam | Established – 1965"], answer:1},
+
+{q:"Petronet LNG Limited, associated with the LNG carrier Disha, has its headquarters at:", options:["Mumbai","Noida","New Delhi","Gandhinagar"], answer:2},
+
+{q:"The Regional Horticultural Research Station (RHRS), Lam Farm, developed two new chilli varieties namely:", options:["LCA-525 and LCA-601","LCA-625 and LCA-643","LCA-645 and LCA-701","LCA-723 and LCA-641"], answer:1},
+
+{q:"The newly developed chilli varieties by RHRS Lam Farm are intended primarily as alternatives to which of the following traditional chilli varieties?", options:["Guntur Sannam and Kashmiri","Teja and Byadgi","Bird's Eye and Bhut Jolokia","Jalapeño and Serrano"], answer:1},
+
+{q:"Which among the following statements correctly describes LCA-643?", options:["Suitable only for dry chilli cultivation","Fruits are 8–10 cm long with high pungency","Suitable for both green and dry chilli cultivation with bright red dried fruits","Restricted only for seed production"], answer:2},
+
+{q:"The chilli variety LCA-625 possesses a pungency level of approximately:", options:["25,000–30,000 SHU","35,000–40,000 SHU","45,000–50,000 SHU","55,000–60,000 SHU"], answer:2},
+
+{q:"Due to limited seed availability, the sale of foundation seeds of the newly developed chilli varieties has been restricted to:", options:["100 grams per farmer","250 grams per farmer","500 grams per farmer","1 kilogram per farmer"], answer:1},
+
+{q:"RHRS Lam Farm functions under which agricultural university?", options:["Professor Jayashankar Telangana State Agricultural University","Acharya N.G. Ranga Agricultural University (ANGRAU)","Tamil Nadu Agricultural University","Kerala Agricultural University"], answer:1},
+
+{q:"The recently approved Kishau Multi-Purpose Dam Project will be constructed on which river?", options:["Chambal","Yamuna","Tons","Ken"], answer:2},
+
+{q:"The Kishau Multi-Purpose Dam Project is estimated to involve an investment of approximately:", options:["₹10,000 crore","₹12,500 crore","₹15,000 crore","₹18,000 crore"], answer:2},
+
+{q:"Which of the following States is NOT among the six States that reached consensus on the Kishau Multi-Purpose Dam Project?", options:["Uttarakhand","Haryana","Punjab","Rajasthan"], answer:2},
+
+{q:"Under the agreed funding pattern for the water component of the Kishau Multi-Purpose Dam Project, the Central Government will provide financial assistance of:", options:["60%","70%","80%","90%"], answer:3},
+
+{q:"The Tons River, on which the Kishau Multi-Purpose Dam Project will be constructed, is the largest tributary of:", options:["Ganga","Yamuna","Chambal","Betwa"], answer:1},
+
+{q:"The Council of Scientific and Industrial Research (CSIR) recently organised a function involving technology transfer and release of Bharatiya Nirdeshak Documents (BNDs). How many technologies were transferred to industry?", options:["Five","Six","Seven","Eight"], answer:2},
+
+{q:"During the same CSIR event, how many Bharatiya Nirdeshak Documents (BNDs) were released?", options:["Eight","Nine","Ten","Twelve"], answer:2},
+
+{q:"Five vapour cells developed by CSIR-NPL were handed over to which organisation for quantum sensing applications?", options:["ISRO","BEL","SSPL-DRDO","BARC"], answer:2},
+
+{q:"Which of the following correctly describes the composition of the ten Bharatiya Nirdeshak Documents (BNDs) released by CSIR?", options:["Seven phytochemicals, two gases and one alloy","Eight phytochemicals, one precious metal and one propane gas","Six phytochemicals, two precious metals and two gases","Nine phytochemicals and one rare earth material"], answer:1},
+
+{q:"Which of the following is correctly matched?", options:["CSIR – Headquarters: Bengaluru – Established: 1942","CSIR-CRRI – Headquarters: hyderabad – Established: 1952","CSIR-NPL – Headquarters: Pune – Established: 1947","SSPL – Headquarters: Hyderabad"], answer:1},
+
+{q:"Union Minister Ashwini Vaishnaw inaugurated Jabil Inc.'s Advanced Manufacturing Facility at:", options:["Talegaon, Maharashtra","Chakan, Maharashtra","Ranjangaon, Pune","Hinjawadi, Pune"], answer:2},
+
+{q:"The newly inaugurated Jabil Inc. facility will primarily manufacture advanced electronics related to:", options:["Satellite launch vehicles only","AI infrastructure, 5G technology and networking equipment","Agricultural drones only","Railway locomotives"], answer:1},
+
+{q:"Jabil Inc., whose advanced manufacturing facility was inaugurated recently, is headquartered in:", options:["Austin, Texas","St. Petersburg, Florida","Seattle, Washington","San Jose, California"], answer:1},
+
+{q:"The Centre has set a target of constructing how many kilometres of rural roads during FY 2026–27?", options:["22,764 km","24,874 km","26,474 km","28,674 km"], answer:2},
+
+{q:"The target for rural road construction during FY 2026–27 is being pursued mainly under PMGSY and:", options:["PM Gati Shakti","RCPLWEA","Bharatmala Pariyojana","National Logistics Policy"], answer:1},
+
+{q:"The e-MARG platform introduced under PMGSY is primarily intended for:", options:["Satellite mapping of highways","Rural road maintenance monitoring, performance assessment and payment tracking","Electronic toll collection","Land acquisition management"], answer:1},
+
+{q:"The allocation announced for rural road construction and maintenance initiatives during FY 2026–27 amounts to:", options:["₹15,907 crore","₹17,805 crore","₹18,907 crore","₹20,907 crore"], answer:2},
+
+{q:"The Department of Food and Public Distribution (DFPD) launched an AI and IoT-based Smart Warehousing System primarily to modernise:", options:["Fertiliser warehouses","Foodgrain storage infrastructure","Petroleum reserves","Cold chain facilities for fisheries"], answer:1},
+
+{q:"According to the announcement, the world's largest deployment of AI and IoT technologies in public-sector foodgrain warehousing has initially been implemented in how many Central Warehousing Corporation (CWC) warehouses?", options:["150","180","215","250"], answer:2},
+
+{q:"Which of the following technologies is NOT mentioned as a feature of the newly launched Smart Warehousing System for foodgrain storage?", options:["FASTag and ANPR-based gate automation","Geo-tagged smart locks","AI-enabled bag counting and face-recognition systems","Blockchain-enabled commodity futures settlement"], answer:3},
+
+{q:"The National Financial Reporting Authority (NFRA), in collaboration with the Institute of Chartered Accountants of India (ICAI), organised its first workshop of the current financial year with the objective of strengthening audit quality and enhancing professional competence. What was the theme of this workshop?", options:["Transforming India's Corporate Governance Framework","Creating a Better Financial Reporting Ecosystem","Building Trust through Sustainable Financial Audits","Enhancing Corporate Accountability through Digital Reporting"], answer:1},
+
+{q:"The inaugural session of the NFRA–ICAI workshop on creating a better financial reporting ecosystem was jointly led by which of the following dignitaries?", options:["Nitin Gupta and CA Prasanna Kumar D.","Ravi Mittal and Ranjeet Kumar Agarwal","Ajay Bhushan Pandey and CA Charanjot Singh Nanda","Sanjeev Sanyal and CA B. Mahesh"], answer:0},
+
+{q:"The primary objective behind organising the National Financial Reporting Authority (NFRA) workshop in association with ICAI was to:", options:["Promote financial inclusion through digital banking reforms.","Enhance professional capacity of audit practitioners and improve financial reporting standards.","Increase GST compliance among listed companies.","Introduce a new accounting framework exclusively for MSMEs."], answer:1},
+
+{q:"Which of the following correctly represents the statutory details of the National Financial Reporting Authority (NFRA)?", options:["Headquarters – Mumbai | Established – 2016 | Ministry of Finance","Headquarters – New Delhi | Established – 2018 | Ministry of Corporate Affairs","Headquarters – New Delhi | Established – 2014 | Ministry of Commerce & Industry","Headquarters – Gurugram | Established – 2019 | Ministry of Corporate Affairs"], answer:1},
+
+{q:"The Institute of Chartered Accountants of India (ICAI), which collaborated with NFRA in organising the financial reporting workshop, functions under which ministry?", options:["Ministry of Finance","Ministry of Corporate Affairs","Ministry of Commerce & Industry","Ministry of Law and Justice"], answer:1},
+
+{q:"Which of the following correctly matches the Institute of Chartered Accountants of India (ICAI) with its static details?", options:["Headquarters – Mumbai | Established – 1956","Headquarters – New Delhi | Established – 1949","Headquarters – Gurugram | Established – 1952","Headquarters – Chennai | Established – 1947"], answer:1},
+
+{q:"The motto \"Ya Aeshu Suptaeshu Jagrati (A person awake in those that sleep)\" is associated with which professional body?", options:["Institute of Company Secretaries of India (ICSI)","Institute of Cost Accountants of India (ICMAI)","Institute of Chartered Accountants of India (ICAI)","National Financial Reporting Authority (NFRA)"], answer:2},
+
+{q:"The Ministry of Railways recently approved several infrastructure projects to strengthen freight movement, improve passenger connectivity and support Mission 3000 MT. Which of the following projects is associated with South East Central Railway (SECR)?", options:["Adipur–Bhuj Doubling Project","Champa–Korba Third Line Project","Somtane–Chikhli Chord Line","Eastern Railway Signalling Modernisation"], answer:1},
+
+{q:"The recently approved Champa–Korba Third Line Project has an estimated project cost of:", options:["₹493 crore","₹755 crore","₹405 crore","₹172 crore"], answer:1},
+
+{q:"The Champa–Korba Third Line Project, approved by Indian Railways, will primarily connect the coalfields of South Eastern Coalfields Limited (SECL) and Mahanadi Coalfields Limited (MCL) with which major freight corridor?", options:["Delhi–Mumbai Industrial Corridor","Mumbai–Howrah High-Density Corridor","Eastern Dedicated Freight Corridor","Chennai–Kolkata Freight Corridor"], answer:1},
+
+{q:"According to the approved railway infrastructure project, the combined coal production capacity of SECL and MCL is expected to increase from approximately 247 MTPA to nearly:", options:["350 MTPA","400 MTPA","450 MTPA","500 MTPA"], answer:2},
+
+{q:"The Adipur–Bhuj Doubling Project, approved by Indian Railways for strengthening freight operations in Gujarat, has a proposed route length of:", options:["42 km","49 km","55 km","63 km"], answer:1},
+
+{q:"The Somtane–Chikhli Chord Line Project in Maharashtra is expected to particularly benefit freight traffic originating from which major port authority?", options:["Deendayal Port Authority (DPA)","Jawaharlal Nehru Port Authority (JNPA)","Mumbai Port Authority (MbPA)","Paradip Port Authority"], answer:1},
+
+{q:"The recently approved Eastern Railway Signalling Modernisation Project involves the implementation of Electronic Interlocking at how many railway stations?", options:["24","28","32","36"], answer:2},
+
+{q:"Which city, popularly known as the \"Power Capital of India,\" is directly associated with the Champa–Korba Third Line Project approved by Indian Railways?", options:["Dhanbad","Korba","Talcher","Singrauli"], answer:1},
+
+{q:"The National Capital Region Planning Board (NCRPB) recently approved the development of four \"Namo Cities\" under which long-term regional planning framework?", options:["Delhi Vision 2035","Regional Plan 2041","National Urban Policy 2047","NCR Sustainable Development Vision 2050"], answer:1},
+
+{q:"The four proposed \"Namo Cities\" are planned to be developed primarily along which transport infrastructure corridor to promote transit-oriented urbanisation?", options:["Dedicated Freight Corridor (DFC)","Regional Rapid Transit System (RRTS) Corridor","Bharatmala Economic Corridor","Delhi Metro Phase-V Corridor"], answer:1},
+
+{q:"The Central Government has proposed financial assistance of approximately how much over five years for the development of the newly approved \"Namo Cities\"?", options:["₹3,000 crore","₹4,000 crore","₹5,000 crore","₹6,000 crore"], answer:2},
+
+{q:"Under the Regional Plan 2041, the National Capital Region (NCR) has been divided into multiple development zones. The Core Zone has been proposed between which two major expressways?", options:["Delhi–Meerut Expressway and Yamuna Expressway","KGP Expressway and KMP Expressway","Dwarka Expressway and NH-48","Eastern Peripheral Expressway and Western Dedicated Freight Corridor"], answer:1},
+
+{q:"Which of the following locations has NOT been identified as one of the Counter Magnet Areas under the Regional Plan 2041 approved by the National Capital Region Planning Board (NCRPB)?", options:["Bareilly","Gwalior","Kota","Agra"], answer:3},
+
+{q:"The Indian Cyber Crime Coordination Centre (I4C), functioning under the Ministry of Home Affairs (MHA), launched two new digital platforms to strengthen cybercrime response and provide relief to victims. Which two portals were launched?", options:["Cyber Fraud Monitoring System (CFMS) and Money Recovery Portal (MRP)","Grievance Redressal Mechanism (GRM) and Money Restoration Module (MRM)","National Cyber Grievance Portal (NCGP) and Digital Recovery System (DRS)","Cyber Complaint Management Portal (CCMP) and Financial Recovery Module (FRM)"], answer:1},
+
+{q:"The Money Restoration Module (MRM), launched by the Indian Cyber Crime Coordination Centre (I4C), has been developed primarily to:", options:["Monitor international cybercrime syndicates.","Help victims recover frozen or recovered money lost in cyber financial fraud.","Track cryptocurrency transactions across exchanges.","Provide legal assistance to victims of identity theft."], answer:1},
+
+{q:"The Grievance Redressal Mechanism (GRM) portal launched by the Indian Cyber Crime Coordination Centre (I4C) is mainly designed to address complaints related to:", options:["Cyberbullying on social media platforms.","Online banking password reset requests.","Frozen, lien-marked or seized bank accounts.","Identity verification for Aadhaar-linked bank accounts."], answer:2},
+
+{q:"Citizens who become victims of cyber financial fraud can report incidents through the National Cyber Crime Reporting Portal (NCRP) or by calling which dedicated national helpline number?", options:["112","155260","1930","181"], answer:2},
+
+{q:"Which of the following correctly represents the static details of the Indian Cyber Crime Coordination Centre (I4C)?", options:["Established – 2018 | Headquarters – Hyderabad","Established – 2020 | Headquarters – New Delhi","Established – 2019 | Headquarters – Gurugram","Established – 2021 | Headquarters – New Delhi"], answer:1},
+
+{q:"The National Cyber Crime Reporting Portal (NCRP), which works in coordination with the newly launched I4C portals, was launched in:", options:["2018","2019","2020","2021"], answer:1},
+
+{q:"The ICAR–Indian Institute of Oilseeds Research (ICAR-IIOR) has developed a biopolymer-based Smart Seed Coating Technology. What is the primary objective behind this innovation?", options:["Reducing irrigation requirements by 80%.","Improving crop productivity and resistance to various stresses.","Replacing hybrid seeds with indigenous varieties.","Increasing the shelf life of harvested crops."], answer:1},
+
+{q:"The Smart Seed Coating Technology developed by ICAR-IIOR has demonstrated an estimated crop yield improvement in the range of:", options:["5–15%","10–25%","12–37%","20–45%"], answer:2},
+
+{q:"The newly developed Smart Seed Coating Technology by ICAR-IIOR has been successfully tested on crops including soybean, maize, groundnut, chickpea, cotton, mustard and:", options:["Sunflower","Pigeon pea","Sesame","Safflower"], answer:1},
+
+{q:"Which of the following institutions developed the patented Smart Seed Coating Technology for enhancing crop productivity?", options:["ICAR-Central Research Institute for Dryland Agriculture (CRIDA)","ICAR-Indian Institute of Oilseeds Research (IIOR)","Indian Agricultural Research Institute (IARI)","National Bureau of Plant Genetic Resources (NBPGR)"], answer:1},
+
+{q:"The Agricultural and Processed Food Products Export Development Authority (APEDA) recently facilitated the first export of fresh Uttarakhand litchi to which European country?", options:["Germany","France","Italy","Spain"], answer:2},
+
+{q:"According to APEDA, how much fresh Uttarakhand litchi was exported during this first shipment to Italy?", options:["500 kilograms","750 kilograms","One metric tonne","Two metric tonnes"], answer:2},
+
+{q:"Which of the following is NOT listed among the major litchi varieties exported from Uttarakhand with APEDA's support?", options:["Rose Scented","Calcuttia","Bedana","Shahi"], answer:3},
+
+{q:"Apart from facilitating the export of Uttarakhand litchi, APEDA also enabled the first export of 22.6 metric tonnes of dried whole egg powder from Odisha to which country?", options:["Netherlands","Austria","Belgium","Switzerland"], answer:1},
+
+{q:"Which of the following correctly represents the static details of the Agricultural and Processed Food Products Export Development Authority (APEDA)?", options:["Established – 1985 | Headquarters – Mumbai","Established – 1986 | Headquarters – New Delhi","Established – 1987 | Headquarters – Gurugram","Established – 1988 | Headquarters – Noida"], answer:1},
+
+{q:"Chennai Petroleum Corporation Limited (CPCL) was recently upgraded to Navratna Central Public Sector Enterprise (CPSE) status with the approval of the Department of Public Enterprises. It became India's:", options:["25th Navratna CPSE","26th Navratna CPSE","27th Navratna CPSE","28th Navratna CPSE"], answer:3},
+
+{q:"Which Union Minister approved the proposal to grant Navratna status to Chennai Petroleum Corporation Limited (CPCL)?", options:["Hardeep Singh Puri","Nirmala Sitharaman","Piyush Goyal","Ashwini Vaishnaw"], answer:1},
+
+{q:"According to the eligibility criteria for Navratna status, a Central Public Sector Enterprise (CPSE) must secure a minimum score of:", options:["50 out of 100","55 out of 100","60 out of 100","65 out of 100"], answer:2},
+
+{q:"Under the Navratna guidelines, an eligible CPSE can make investments without prior government approval up to:", options:["₹500 crore or 10% of net worth","₹750 crore or 12% of net worth","₹1,000 crore or 15% of net worth","₹1,500 crore or 20% of net worth"], answer:2},
+
+{q:"The Unique Identification Authority of India (UIDAI), in collaboration with IIIT Hyderabad, recognised the winners of the Face and Iris Biometric SDK Benchmarking Challenges. Which organisation emerged as the winner of the Face Challenge?", options:["IDEMIA, France","Innovatrics, Slovakia","NEC Corporation, Japan","Thales, France"], answer:1},
+
+];
+
+// ===============================
+// VARIABLES
+// ===============================
+
+let userAnswers = new Array(questions.length).fill(null);
+
+let markedForReview = new Array(questions.length).fill(false);
+
+let submitted = false;
+
+// ===============================
+// LOAD QUIZ
+// ===============================
+
+function loadQuiz(){
+
+    const quizDiv = document.getElementById("quiz");
+
+    questions.forEach((question,index)=>{
+
+        const qDiv = document.createElement("div");
+
+        qDiv.classList.add("question");
+
+        qDiv.id = `question_${index}`;
+
+        qDiv.innerHTML = `
+        <h3>Q${index+1}. ${question.q}</h3>
+        `;
+
+        question.options.forEach((option,optIndex)=>{
+
+            const opt = document.createElement("div");
+
+            opt.classList.add("option");
+
+            opt.innerText = option;
+
+            opt.onclick = ()=>selectOption(index,optIndex,opt);
+
+            opt.id = `q${index}_opt${optIndex}`;
+
+            qDiv.appendChild(opt);
+
+        });
+
+        // MARK BUTTON
+
+        const markBtn = document.createElement("button");
+
+        markBtn.innerText = "Mark For Review";
+
+        markBtn.classList.add("mark-btn");
+
+        markBtn.onclick = ()=>toggleMark(index,markBtn);
+
+        qDiv.appendChild(markBtn);
+
+        // CLEAR BUTTON
+
+        const clearBtn = document.createElement("button");
+
+        clearBtn.innerText = "Clear";
+
+        clearBtn.classList.add("clear-btn");
+
+        clearBtn.onclick = ()=>clearAnswer(index);
+
+        qDiv.appendChild(clearBtn);
+
+        quizDiv.appendChild(qDiv);
+
+    });
+
+}
+
+// ===============================
+// SELECT OPTION
+// ===============================
+
+function selectOption(qIndex,optIndex,element){
+
+    if(submitted) return;
+
+    userAnswers[qIndex] = optIndex;
+
+    const options = document.querySelectorAll(`[id^="q${qIndex}_opt"]`);
+
+    options.forEach(opt=>{
+        opt.classList.remove("selected");
+    });
+
+    element.classList.add("selected");
+
+}
+
+// ===============================
+// MARK FOR REVIEW
+// ===============================
+
+function toggleMark(index,button){
+
+    markedForReview[index] = !markedForReview[index];
+
+    const questionBox = document.getElementById(`question_${index}`);
+
+    if(markedForReview[index]){
+
+        button.classList.add("marked");
+
+        button.innerText = "Marked For Review";
+
+        questionBox.classList.add("review-marked");
+
+    }else{
+
+        button.classList.remove("marked");
+
+        button.innerText = "Mark For Review";
+
+        questionBox.classList.remove("review-marked");
+
+    }
+
+}
+
+// ===============================
+// CLEAR ANSWER
+// ===============================
+
+function clearAnswer(index){
+
+    if(submitted) return;
+
+    userAnswers[index] = null;
+
+    const options = document.querySelectorAll(`[id^="q${index}_opt"]`);
+
+    options.forEach(opt=>{
+        opt.classList.remove("selected");
+    });
+
+}
+
+// ===============================
+// SUBMIT QUIZ
+// ===============================
+
+function submitQuiz(){
+
+    if(submitted) return;
+
+    submitted = true;
+
+    clearInterval(timer);
+
+    let score = 0;
+
+    let correctCount = 0;
+    let wrongCount = 0;
+    let unansweredCount = 0;
+
+    questions.forEach((question,index)=>{
+
+        const userAns = userAnswers[index];
+
+        if(userAns === null){
+
+            unansweredCount++;
+
+        }
+        else if(userAns === question.answer){
+
+            score += 1;
+            correctCount++;
+
+        }
+        else{
+
+            score -= 0.25;
+            wrongCount++;
+
+        }
+
+    });
+
+    let attempted = correctCount + wrongCount;
+
+    let accuracy = attempted > 0
+    ? ((correctCount/attempted)*100).toFixed(2)
+    : 0;
+
+    document.body.innerHTML = `
+
+    <div class="container">
+
+        <div class="result-box">
+
+            <h1>Quiz Submitted ✅</h1>
+
+            <h2>Total Score: ${score.toFixed(2)}</h2>
+
+            <h3>Correct Answers: ${correctCount}</h3>
+
+            <h3>Wrong Answers: ${wrongCount}</h3>
+
+            <h3>Unanswered Questions: ${unansweredCount}</h3>
+
+            <h3>Accuracy: ${accuracy}%</h3>
+
+            <button class="review-btn" onclick="reviewAnswers()">
+            Review Answers
+            </button>
+
+            <div id="reviewSection"></div>
+
+        </div>
+
+    </div>
+
+    `;
+
+}
+
+// ===============================
+// REVIEW ANSWERS
+// ===============================
+
+function reviewAnswers(){
+
+    const reviewSection = document.getElementById("reviewSection");
+
+    let html = `<h1 style="margin-top:40px;">Review Section</h1>`;
+
+    questions.forEach((question,index)=>{
+
+        const userAns = userAnswers[index];
+
+        let status = "";
+        let marks = "";
+
+        if(userAns === null){
+
+            status = `<span class="unanswered">Unanswered</span>`;
+            marks = `0 Marks`;
+
+        }
+        else if(userAns === question.answer){
+
+            status = `<span class="correct">Correct ✅</span>`;
+            marks = `+1 Mark`;
+
+        }
+        else{
+
+            status = `<span class="wrong">Wrong ❌</span>`;
+            marks = `-0.25 Mark`;
+
+        }
+
+        html += `
+
+        <div class="review-question">
+
+            <h3>Q${index+1}. ${question.q}</h3>
+
+            <p>${status}</p>
+
+            <p><b>Marks:</b> ${marks}</p>
+
+            <p>
+            <b>Your Answer:</b>
+            ${
+                userAns === null
+                ? "Not Attempted"
+                : question.options[userAns]
+            }
+            </p>
+
+            <div class="correct-answer">
+            <b>Correct Answer:</b>
+            ${question.options[question.answer]}
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    reviewSection.innerHTML = html;
+
+}
+
+// ===============================
+// TIMER
+// ===============================
+
+let time = 1800;
+
+let timer;
+
+let isPaused = false;
+
+function startTimer(){
+
+    timer = setInterval(()=>{
+
+        if(!isPaused){
+
+            let minutes = Math.floor(time/60);
+
+            let seconds = time%60;
+
+            document.getElementById("timer").innerText =
+            `Time Left: ${minutes}:${seconds < 10 ? '0'+seconds : seconds}`;
+
+            time--;
+
+            if(time < 0){
+
+                clearInterval(timer);
+
+                alert("Time is up! Quiz auto-submitted.");
+
+                submitQuiz();
+
+            }
+
+        }
+
+    },1000);
+
+}
+
+// ===============================
+// PAUSE TIMER
+// ===============================
+
+function pauseTimer(){
+
+    if(submitted) return;
+
+    isPaused = true;
+
+    document.getElementById("pauseBtn").disabled = true;
+
+    document.getElementById("resumeBtn").disabled = false;
+
+    // Disable options
+    document.querySelectorAll(".option").forEach(opt=>{
+        opt.classList.add("disabled-option");
+    });
+
+    // Disable buttons
+    document.querySelectorAll(".mark-btn, .clear-btn").forEach(btn=>{
+        btn.disabled = true;
+        btn.classList.add("disabled-btn");
+    });
+
+}
+// ===============================
+// RESUME TIMER
+// ===============================
+
+function resumeTimer(){
+
+    if(submitted) return;
+
+    isPaused = false;
+
+    document.getElementById("pauseBtn").disabled = false;
+
+    document.getElementById("resumeBtn").disabled = true;
+
+    // Enable options
+    document.querySelectorAll(".option").forEach(opt=>{
+        opt.classList.remove("disabled-option");
+    });
+
+    // Enable buttons
+    document.querySelectorAll(".mark-btn, .clear-btn").forEach(btn=>{
+        btn.disabled = false;
+        btn.classList.remove("disabled-btn");
+    });
+
+}
+// ===============================
+
+loadQuiz();
+
+startTimer();
+
+</script>
+
+</body>
+</html>
